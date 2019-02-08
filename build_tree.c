@@ -4,6 +4,8 @@
 
 #include "get_letters.c"
 
+int CODETABLE[256][256];
+
 
 Hnode_queue_entry** fill_queue(FILE* f){
 	char* str;
@@ -57,45 +59,12 @@ Hnode* build_tree(FILE* f){
 }
 
 
-
-void printArr(int arr[], int n) 
-{ 
-    int i; 
-    for (i = 0; i < n; ++i) 
-        printf("%d", arr[i]); 
-  
-    printf("\n"); 
-} 
-
-void printCodes(Hnode* root, int arr[], int top) 
-  
-{ 
-  
-    if (root->left) { 
-  
-        arr[top] = 0; 
-        printCodes(root->left, arr, top + 1); 
-    } 
-
-    if (root->right) { 
-  
-        arr[top] = 1; 
-        printCodes(root->right, arr, top + 1); 
-    } 
-  
- 
-    if (root->isleaf == 1) { 
-  
-        printf("%c: ", root->letter); 
-        printArr(arr, top); 
-    } 
-} 
-
-int main(int argc, char ** argv){
+/*int main(int argc, char ** argv){
 	int *arr;
 	int top;
 	FILE* f;
 	Hnode* tree;
+	null_table();
 	arr = malloc(sizeof(int)*100);
 	top = 0;
 	f = fopen(argv[1], "r");
@@ -106,7 +75,7 @@ int main(int argc, char ** argv){
 	
 	return 0;
 }
-
+*/
 
 
 

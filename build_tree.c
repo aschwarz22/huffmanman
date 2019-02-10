@@ -1,5 +1,8 @@
-#include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <sys/types.h>
+
 #include "htable.c"
 
 #include "get_letters.c"
@@ -7,7 +10,7 @@
 int CODETABLE[256][256];
 
 
-Hnode_queue_entry** fill_queue(FILE* f){
+Hnode_queue_entry** fill_queue(int f){
 	char* str;
 	Entry** tab;
 	int i;
@@ -33,7 +36,7 @@ Hnode_queue_entry** fill_queue(FILE* f){
 	return queue;
 }
 
-Hnode* build_tree(FILE* f){
+Hnode* build_tree(int f){
 	Hnode_queue_entry** queue;
 	Hnode_queue_entry* start;
 	Hnode* tree;

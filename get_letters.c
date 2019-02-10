@@ -1,13 +1,13 @@
-#include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include "hashtable.c"
 
-char *read_long_line(FILE* f){
+char *read_long_line(int fd){
 	int limit = 10*sizeof(char);
 	char *str = malloc(limit);
 	int i=0;
 	char c;
-	while((c = getc(f)) != EOF){
+	while((read(fd, (void*)&c, 1)) > 0){
 		if (i == limit-1){ 
 			limit = limit*limit;
 			str = realloc(str, limit);
@@ -21,9 +21,8 @@ char *read_long_line(FILE* f){
 			str = realloc(str, limit);
 		}
 	str[i] = '\0';
-	fclose(f);
 	return str;
-} 
+}
 
 Entry** fill_table(char* str){
 	int i;

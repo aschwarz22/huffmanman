@@ -120,7 +120,7 @@ int main(int argc, char ** argv){
 		perror(argv[1]);
 		exit(EXIT_FAILURE);
 	}
-	if (argc > 1){
+	if (argc > 2){
 		out = open(argv[2], O_WRONLY | O_TRUNC);
 		if (out == -1){
 			perror(argv[2]);

@@ -1,9 +1,10 @@
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h> 
 #include <errno.h>
 #include <fcntl.h>
 #include "htable.c"
@@ -28,6 +29,9 @@ Hnode_queue_entry** make_nodes(int infile){
 				new = create_queue(start);
 				new->next = NULL;
 				queue = &new;
+				if (unique == 1){
+					return queue;
+				}
 		}
 		else{
 			push(queue, start);
@@ -66,6 +70,7 @@ void decode(int infile, int outfile){
 	Hnode* tree;
 	Hnode** head;
 	Hnode* start;
+	uint8_t letr;
 	int bitno;
 	int total_letters;
 	uint8_t byte_out;
@@ -84,15 +89,18 @@ void decode(int infile, int outfile){
 		comp = ((uint8_t)1<<(7-bitno));
 		comp &= byte_out;
 		if (start->isleaf == 1){
-			write(outfile, (void*)&(start->letter), 1);
+			letr = (uint8_t)start->letter;
+			write(outfile, (void*)&(letr), 1);
 			start = *head;
 			letters_in++;
 		}
-		if (comp == 0){
-			start = start->left;
-		}
-		else{
-			start = start->right;
+		if (start->isleaf == 0){
+			if (comp == 0){
+				start = start->left;
+			}
+			else{
+				start = start->right;
+			}
 		}
 		bitno++;
 
@@ -101,34 +109,66 @@ void decode(int infile, int outfile){
 
 }
 
+int check_full(int input){
+	off_t fsize;
+	fsize = lseek(input, 0, SEEK_END);
+	close(input);
+	return (int)fsize;
+}
+
 
 int main(int argc, char** argv){
 	int infile;
+	int empty;
 	int outfile;
 	char* message;
-	if (argc > 0){
-		infile = open(argv[1], O_RDONLY);
+	if (argc == 1){
+		infile = STDIN_FILENO;
 	}
-	else{
+	if (argc == 2){
+		infile = STDIN_FILENO;
+		outfile = open(argv[1], O_WRONLY | O_TRUNC | O_CREAT, S_IRWXU);
+	}
+	if (argc > 2){
+		if (argv[1][0] == '-'){
+			infile = STDIN_FILENO;
+		}
+		else{
+			infile = open(argv[1], O_RDONLY);
+		outfile = open(argv[2], O_WRONLY|O_TRUNC|O_CREAT, S_IRWXU);
+		}
+	}
+	if (argc == 0){
 		message = "Usage error: hencode infile [outfile]";
 		write(STDERR_FILENO, (void*)message, sizeof(strlen(message)));
 		exit(EXIT_FAILURE);
 	}
-	if (infile == -1){
+	if (infile == -1 || outfile == -1){
 		perror(argv[1]);
 		exit(EXIT_FAILURE);
 	}
-	if (argc > 1){
-		outfile = open(argv[2], O_WRONLY | O_TRUNC);
-		if (outfile == -1){
-			perror(argv[2]);
+	empty = check_full(infile);
+	if (argc == 1){
+		infile = STDIN_FILENO;
+	}
+	if (argc == 2){
+		infile = STDIN_FILENO;
+	}
+	if (argc > 2){
+		if (argv[1][0] == '-'){
+			infile = STDIN_FILENO;
+		}
+		else{
+			infile = open(argv[1], O_RDONLY);
 		}
 	}
-	else{
-		outfile = STDOUT_FILENO;
-	}	
-	decode(infile, outfile);
+	if (empty != 4){
+		decode(infile, outfile);
+		close(infile);
+		close(outfile);
+	}
 	close(infile);
 	close(outfile);
+	
 	return 0;
 }

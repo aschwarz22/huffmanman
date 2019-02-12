@@ -10,15 +10,21 @@
 int CODETABLE[256][256];
 
 
-Hnode_queue_entry** fill_queue(int f){
-	char* str;
+Hnode_queue_entry** fill_queue(int f, char* name){
+	unsigned char* str;
+	int fsize;
 	Entry** tab;
 	int i;
 	Hnode * start;
 	Hnode_queue_entry *new;
 	Hnode_queue_entry** queue = NULL;
 	str = read_long_line(f);
-	tab = fill_table(str);
+	close(f);
+	open(name, O_RDONLY);
+	fsize = (int)lseek(f, 0, SEEK_END);
+	close(f);
+	open(name, O_RDONLY);
+	tab = fill_table(str, fsize);
 	for(i = 0; i < 256; i++){
 		if(tab[i]){
 			start = create_leaf(tab[i]->frequency, tab[i]->letter);
@@ -36,13 +42,13 @@ Hnode_queue_entry** fill_queue(int f){
 	return queue;
 }
 
-Hnode* build_tree(int f){
+Hnode* build_tree(int f, char* fname){
 	Hnode_queue_entry** queue;
 	Hnode_queue_entry* start;
 	Hnode* tree;
 	Hnode* left;
 	Hnode* right;
-	queue = fill_queue(f);
+	queue = fill_queue(f, fname);
 	start = *queue;
 	while(start->next){
 		left = start->current;

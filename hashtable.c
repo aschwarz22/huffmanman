@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h> 
 #include "hashtable.h"
 
 Entry** create_table(){
@@ -11,9 +12,9 @@ Entry** create_table(){
 	return table;
 }
 
-Entry* create_entry(char letter){
+Entry* create_entry(unsigned char letter){
 	Entry* new = malloc(sizeof(struct Entry));
-	new->letter = letter;
+	new->letter = (uint8_t)letter;
 	new->frequency = 1;
 	return new;
 }
@@ -28,7 +29,7 @@ void clear_hashtable(Entry** table){
 	free(table);
 }
 
-void insert(Entry** table, char letter){
+void insert(Entry** table, unsigned char letter){
 	Entry *new;
 	int index;
 	new = create_entry(letter); 

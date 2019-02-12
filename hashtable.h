@@ -3,15 +3,15 @@
 
 typedef struct Entry{
 	int frequency;
-	char letter;
+	unsigned char letter;
 } Entry;
 
 Entry** create_table();
 
-void insert(Entry**, char);
+void insert(Entry**, unsigned char);
 
 
-Entry* create_entry(char);
+Entry* create_entry(unsigned char);
 
 void clear_hashtable(Entry**);
 

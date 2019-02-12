@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include "hashtable.c"
 
-char *read_long_line(int fd){
+unsigned char *read_long_line(int fd){
 	int limit = 10*sizeof(char);
-	char *str = malloc(limit);
+	unsigned char *str = malloc(limit);
 	int i=0;
-	char c;
+	unsigned char c;
 	while((read(fd, (void*)&c, 1)) > 0){
 		if (i == limit-1){ 
 			limit = limit*limit;
@@ -24,12 +24,12 @@ char *read_long_line(int fd){
 	return str;
 }
 
-Entry** fill_table(char* str){
+Entry** fill_table(unsigned char* str, int filesize){
 	int i;
 	Entry** tab;
 	tab = create_table();
 	i = 0;
-	while (str[i] != '\0'){
+	while (i < filesize){
 		insert(tab, str[i]);
 		i++;
 	}

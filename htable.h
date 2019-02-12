@@ -6,7 +6,7 @@ typedef struct Hnode{
 	int isleaf;
 	struct Hnode *left;
 	struct Hnode *right;
-	char letter;
+	unsigned char letter;
 
 } Hnode;
 
@@ -17,7 +17,7 @@ typedef struct Hnode_queue_entry{
 
 
 
-Hnode* create_leaf(int, char);
+Hnode* create_leaf(int, unsigned char);
 
 Hnode* create_tree(Hnode*, Hnode*);
 
@@ -28,7 +28,7 @@ Hnode_queue_entry *create_queue(Hnode*);
 int peek_frequency(Hnode_queue_entry*);
 
 /* peeks at word of top of priority queue */
-char peek_word(Hnode_queue_entry*);
+unsigned char peek_word(Hnode_queue_entry*);
 
 
 

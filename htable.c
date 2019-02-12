@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "htable.h"
 
-Hnode* create_leaf(int frequency, char letter){
+Hnode* create_leaf(int frequency, unsigned char letter){
 	Hnode* newleaf = malloc(sizeof(struct Hnode));
 	newleaf->letter = letter;
 	newleaf->frequency = frequency;
@@ -23,6 +23,7 @@ Hnode* create_tree(Hnode* left, Hnode* right){
 
 	head->left = left;
 	head->right = right;
+
 	if ((int)(left->letter) < (int)(right->letter)){
 		head->letter = left->letter;
 	}
@@ -35,7 +36,8 @@ Hnode* create_tree(Hnode* left, Hnode* right){
 }
 
 Hnode_queue_entry *create_queue(Hnode* new){      
-    Hnode_queue_entry *queue = (Hnode_queue_entry*)malloc(sizeof(struct Hnode_queue_entry));		/* allocate space for element */
+    Hnode_queue_entry *queue;
+    queue = (Hnode_queue_entry*)malloc(sizeof(struct Hnode_queue_entry));
 	queue->current = new;
 	return queue;
 }
@@ -47,7 +49,7 @@ int peek_frequency(Hnode_queue_entry *queue)
 } 
 
 /* peeks at word of top of priority queue */
-char peek_word(Hnode_queue_entry *queue){
+unsigned char peek_word(Hnode_queue_entry *queue){
 	return queue->current->letter;
 }
 
@@ -63,22 +65,18 @@ void push(Hnode_queue_entry **queue, Hnode* new){
 		*queue = newnode;
 	}
 
-	else if (new->frequency < start->current->frequency){					/* add element to front of list if lower priority than current head */
-		newnode->next = start;									/* set next of node to add to head of current queue */
-		*queue = newnode;										
+	else if (new->frequency < start->current->frequency){
+		newnode->next = start;	
+		*queue = newnode;
 	}
-	else{																			/* finds where in queue new node should be inserted */
-		while (start->next != NULL && newnode->current->frequency >= start->next->current->frequency){
-			if (newnode->current->frequency == start->next->current->frequency){
-				if ((int)(newnode->current->letter) < (int)(start->next->current->letter)){
-					break;
-				}
-			}
-			start = start->next;													/* iterates through queue */
+	else{
+	while (start->next != NULL && newnode->current->frequency > 
+		start->next->current->frequency){
+			start = start->next;	
 		}
 		
 
-		newnode->next = start->next;		/* insert new node into proper list location */
+		newnode->next = start->next;
 		start->next = newnode;
 	}
 }
@@ -87,8 +85,8 @@ void push(Hnode_queue_entry **queue, Hnode* new){
 /* head should have lowest occurance */
 void pop(Hnode_queue_entry** head){
 	Hnode_queue_entry* temp = *head; 
-    (*head) = (*head)->next; 		/* set head to next queue element */
-    free(temp); 					/* delete previous head */
+    (*head) = (*head)->next; 
+    free(temp); 
 }
 
 void clear_queue(Hnode_queue_entry** head){
